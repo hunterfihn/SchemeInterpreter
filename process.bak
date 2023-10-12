@@ -11,7 +11,7 @@
                     ((eq? 'num-exp (car parse)) (process_num_exp parse env))
                     ((eq? 'bool-exp (car parse))(process_bool_exp parse env))
                     ((eq? 'ask-exp (car parse)) (process_ask_exp parse env))
-                    ((eq? 'math-exp (car parse)) (process_math_exp parse env))
+                    ;((eq? 'math-exp (car parse)) (process_math_exp parse env))
                     (else #f)
                    )
                   )
@@ -40,19 +40,6 @@
                             )
   )
  )
-
-(define process_math_exp (lambda (parse env)
-                           (cond
-                             ((eq? '+ (cadr parse)) (+ (process (caddr parse) env) (process (cadddr parse) env)))
-                             ((eq? '- (cadr parse)) (- (process (caddr parse) env) (process (cadddr parse) env)))
-                             ((eq? '* (cadr parse)) (* (process (caddr parse) env) (process (cadddr parse) env)))
-                             ((eq? '/ (cadr parse)) (quotient (process (caddr parse) env) (process (cadddr parse) env)))
-                             ((eq? '// (cadr parse)) (/ (process (caddr parse) env) (process (cadddr parse) env)))
-                             ((eq? '% (cadr parse)) (modulo (process (caddr parse) env) (process (cadddr parse) env)))
-                             (else (print "Error: Illegal Math Expression"))
-                           )
-  )
-  )
   
 (define process_ask_exp (lambda (parse env)
                           (if (process (cadr parse) env) (process (caddr parse) env) (process (cadddr parse) env))

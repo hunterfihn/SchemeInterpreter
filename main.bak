@@ -14,8 +14,7 @@
                    )
   )
 
-(define parsed
-  (parse '(call (function (x) (+ x a)) 1))
-  )
 
-(process parsed var_env)
+(parse '(call (function (x) x) a))
+
+(execute '(call (function (x) x) 1))

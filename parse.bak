@@ -1,5 +1,4 @@
 #lang racket
-(require "utility.rkt")
 
 (define parse (lambda (statement)
                  (cond
@@ -53,8 +52,8 @@
   )
 
 (define check_math_op (lambda (op)
-                        (is_in_list (list '+ '- '* '/ '// '%) op)
-                         )       
+                        (if (eq? (list-ref '(+ - * / // %) op) -1) #f #t)
+                        )
   )
                           
                           
