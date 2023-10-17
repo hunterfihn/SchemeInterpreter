@@ -60,13 +60,18 @@
   )
 
 (define process_app_exp (lambda (parse env)
-                          (let ((local_env (push_to_env (cadr (car (cadr (cadr parse)))) (process (caddr parse) env) env)
+                          (let (
+                                (local_env
+                                 (push_vars_to_env
+                                  (map (lambda (arg) (cadr arg)) (cdr (cadr (cadr parse))))
+                                  (map (lambda (val-exp)(process (caddr parse) env) env)
                                 )
                             )
                           (process (caddr (cadr parse)) local_env)
                           )
   )
   )
+                          ))
 
 
 (define process_num_exp (lambda (parse env)

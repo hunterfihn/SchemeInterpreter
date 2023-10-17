@@ -36,4 +36,16 @@
   )
 
 
+(define push_vars_to_env (lambda (list_vars list_vals env)
+                           (cons (pair_helper list_vars list_vals) env)
+                            )
+  )
+
+(define pair_helper (lambda (list_vars list_vals)
+                      (if (null? list_vars) '()
+                          (cons (list (car list_vars) (car list_vals)) (pair_helper (cdr list_vars) (cdr list_vals)))
+                          )
+                      )
+  )
+
 (provide (all-defined-out))
