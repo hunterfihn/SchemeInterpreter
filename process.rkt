@@ -12,6 +12,7 @@
                     ((eq? 'bool-exp (car parse))(process_bool_exp parse env))
                     ((eq? 'ask-exp (car parse)) (process_ask_exp parse env))
                     ((eq? 'math-exp (car parse)) (process_math_exp parse env))
+                    ((eq? 'list-exp (car parse)) (print "enter"))
                     (else #f)
                    )
                   )
@@ -63,16 +64,29 @@
                           (let (
                                 (local_env
                                  (push_vars_to_env
-                                  (map (lambda (arg) (cadr arg)) (cdr (cadr (cadr parse))))
-                                  (map (lambda (val-exp)(process (caddr parse) env) env)
+                                  (map (lambda (arg) (cadr arg)) (cdr (car (cadr (cadr parse)))))
+                                  (map (lambda (val-exp)(process val-exp env)) (cdr (caddr parse))) env)
                                 )
                             )
                           (process (caddr (cadr parse)) local_env)
+                            )
                           )
   )
+                          
+(define process_app_exp2 (lambda(parse env)
+    (let
+        (
+         (local_env
+          (push_to_env
+           (cadr (car (cadr (cadr parse))))
+           (process (caddr parse) env)
+           env)
+          )
+         )
+      (process (caddr (cadr parse)) local_env)
+      )
+    )
   )
-                          ))
-
 
 (define process_num_exp (lambda (parse env)
                           (cadr parse)

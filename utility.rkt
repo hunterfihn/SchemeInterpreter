@@ -22,7 +22,7 @@
 
 
 (define push_to_env (lambda (varName varVal env)
-                      (cons (list(list varName varVal)) env)
+                      (cons (list (list varName varVal)) env)
                       )
   )
 
