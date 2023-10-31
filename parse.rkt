@@ -29,6 +29,10 @@
                     (list? statement)
                     (check_math_op (car statement))
                     (eq? (length statement) 3)) (list 'math-exp (car statement) (parse (cadr statement)) (parse (caddr statement))))
+                  ((and
+                    (list? statement)
+                    (eq? 'let (car statement))
+                    (eq? (length statement) 3)) (list 'let-exp (cons 'list-exp (map (lambda (pair) (map (lambda (item) (parse item)) pair))(cadr statement))) (parse (caddr statement))))
                   ((list? statement)
                    (cons 'list-exp (map (lambda (item) (parse item)) statement)))
                   (else (print "Parse Fault: Invalid Statement"))

@@ -8,7 +8,7 @@
                   ((and
                    (list? statement)
                    (eq? 'function (car statement))
-                   (eq? (length statement) 3))(list 'func-exp (list (parse (car (cadr statement)))) (parse (caddr statement))))
+                   (eq? (length statement) 3))(list 'func-exp (list (parse (cadr statement))) (parse (caddr statement))))
                   ((and
                     (list? statement)
                     (eq? 'call (car statement))

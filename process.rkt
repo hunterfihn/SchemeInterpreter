@@ -12,7 +12,7 @@
                     ((eq? 'bool-exp (car parse))(process_bool_exp parse env))
                     ((eq? 'ask-exp (car parse)) (process_ask_exp parse env))
                     ((eq? 'math-exp (car parse)) (process_math_exp parse env))
-                    ((eq? 'list-exp (car parse)) (print "enter"))
+                    ((eq? 'let-exp (car parse)) (process_let_exp parse env))
                     (else #f)
                    )
                   )
@@ -87,6 +87,29 @@
       )
     )
   )
+
+
+(define add_to_top_scope (lambda (varname value env)
+                           (cons
+                            (cons
+                            (list varname value) (car env)
+                            )
+                           (cdr env))
+                         )
+  )
+
+(define process_let_exp (lambda (parse env)
+                          (let*
+                              ((varname_value_list
+                                (map (lambda (pair)
+                                       (list (cadr (car pair)) (process (cadr pair) env)))
+                                     (cdr (cadr parse))))
+                               (let_local_env (cons (append varname_value_list (car env)) (cdr env))))
+                           (process (caddr parse) let_local_env)         
+                           )
+                          )
+  )
+
 
 (define process_num_exp (lambda (parse env)
                           (cadr parse)
