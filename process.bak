@@ -12,8 +12,11 @@
                     ((eq? 'bool-exp (car parse))(process_bool_exp parse env))
                     ((eq? 'ask-exp (car parse)) (process_ask_exp parse env))
                     ((eq? 'math-exp (car parse)) (process_math_exp parse env))
-                    ((eq? 'list-exp (car parse)) (print "enter"))
-                    (else #f)
+                    ((eq? 'let-exp (car parse)) (process_let_exp parse env))
+                    ((eq? 'when-exp (car parse)) ("test"))
+                    ((eq? 'output-exp (car parse)) (displayln (string-append "***output***: "(number->string (process (cadr parse) env)))))
+                    ((eq? 'block-exp (car parse)) (map (lambda (code) (process code env)) (cdr parse)))
+                    (else (error-output "Processor failed to handle parsed input"))
                    )
                   )
   )
@@ -54,6 +57,7 @@
                            )
   )
   )
+
   
 (define process_ask_exp (lambda (parse env)
                           (if (process (cadr parse) env) (process (caddr parse) env) (process (cadddr parse) env))
@@ -61,32 +65,44 @@
   )
 
 (define process_app_exp (lambda (parse env)
-                          (let (
-                                (local_env
-                                 (push_vars_to_env
-                                  (map (lambda (arg) (cadr arg)) (cdr (car (cadr (cadr parse)))))
-                                  (map (lambda (val-exp)(process val-exp env)) (cdr (caddr parse))) env)
-                                )
-                            )
-                          (process (caddr (cadr parse)) local_env)
-                            )
-                          )
-  )
-                          
-(define process_app_exp2 (lambda(parse env)
-    (let
+    (let*
         (
+         (global_env (trim_to_global_scope env))
          (local_env
-          (push_to_env
-           (cadr (car (cadr (cadr parse))))
-           (process (caddr parse) env)
-           env)
+          (push_vars_to_env
+           (map (lambda (arg) (cadr arg)) (cdr (car (cadr (cadr parse)))))
+           (map (lambda (val-exp) (process val-exp env))
+                (cdr (caddr parse)))
+           global_env)
           )
          )
       (process (caddr (cadr parse)) local_env)
       )
     )
   )
+                          
+
+(define add_to_top_scope (lambda (varname value env)
+                           (cons
+                            (cons
+                            (list varname value) (car env)
+                            )
+                           (cdr env))
+                         )
+  )
+
+(define process_let_exp (lambda (parse env)
+                          (let*
+                              ((varname_value_list
+                                (map (lambda (pair)
+                                       (list (cadr (car pair)) (process (cadr pair) env)))
+                                     (cdr (cadr parse))))
+                               (let_local_env (cons (append varname_value_list (car env)) (cdr env))))
+                           (process (caddr parse) let_local_env)         
+                           )
+                          )
+  )
+
 
 (define process_num_exp (lambda (parse env)
                           (cadr parse)

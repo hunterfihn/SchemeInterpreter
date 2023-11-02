@@ -15,12 +15,11 @@
                    )
   )
 
-(define code '(call (function(x)(let ((d 10) (f 20)) (+ d (+ f x)))) (5)))
+;(define code '(while (< a 5) (block (out a) (let ((a (+ a 1)))))))
+
+(define code '(block (out a) (out b)))
 
 (define parsed (parse code))
 
-; (call (functino (x y) (* x y)) (5 c))
-; parsed -> (app-exp (func-exp ((var-exp x) (var-exp y)) (math-exp * (var-exp x) (var-exp y)))
-;((num-exp 5) (var-exp c)))
 
 (process parsed var_env)

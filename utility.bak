@@ -48,4 +48,28 @@
                       )
   )
 
+(define trim_to_global_scope
+  (lambda (env)
+    (cond
+      ((not (pair? env)) (error-output "Illegal environment passed into the trim_to_global_scope argument list"))
+      ((eq? 1 (length env)) env)
+      (else (trim_to_global_scope (cdr env)))
+      )
+    )
+  )
+
+(define error-output (lambda (output) (displayln (string-append "***Error***: " output))
+                      )
+  )
+
+(define pick_first_non_void (lambda (lst)
+                              (cond
+                                ((not (pair? lst)) (error-output "Received invalid parameter"))
+                                ((and (pair? lst) (eq? (length lst) 1) (void? (car lst))) (display "***End***"))
+                                ((void? (car lst)) (pick_first_non_void (cdr list)))
+                                (else (car list))
+                                )
+                              )
+  )
+
 (provide (all-defined-out))

@@ -5,41 +5,63 @@
                  (cond
                   ((symbol? statement) (list 'var-exp statement))
                   ((number? statement) (list 'num-exp statement))
+                  ;func exp
                   ((and
                    (list? statement)
                    (eq? 'function (car statement))
                    (eq? (length statement) 3))(list 'func-exp (list (parse (cadr statement))) (parse (caddr statement))))
+                  ;call exp
                   ((and
                     (list? statement)
                     (eq? 'call (car statement))
                     (eq? (length statement) 3))(if (eq? (length (cadr (cadr statement))) (length (caddr statement))) (list 'app-exp (parse (cadr statement)) (parse (caddr statement))) (print "Error: Argument Mismatch")))
+                  ;bool exp
                   ((and
                     (list? statement)
                     (check_bool_op (car statement))
                     (eq? (length statement) 3))(list 'bool-exp (car statement) (parse (cadr statement)) (parse (caddr statement))))
+                  ;not exp
                   ((and
                     (list? statement)
                     (eq? '! (car statement))
                     (eq? (length statement) 2)) (list 'bool-exp (car statement) (parse (cadr statement))))
+                  ;ask exp
                   ((and
                     (list? statement)
                     (eq? 'ask (car statement))
                     (eq? (length statement) 4)) (list 'ask-exp (parse (cadr statement)) (parse (caddr statement)) (parse (cadddr statement))))
+                  ;math exp
                   ((and
                     (list? statement)
                     (check_math_op (car statement))
                     (eq? (length statement) 3)) (list 'math-exp (car statement) (parse (cadr statement)) (parse (caddr statement))))
+                  ;let exp
                   ((and
                     (list? statement)
                     (eq? 'let (car statement))
                     (eq? (length statement) 3)) (list 'let-exp (cons 'list-exp (map (lambda (pair) (map (lambda (item) (parse item)) pair))(cadr statement))) (parse (caddr statement))))
+                  ;block exp
+                  ((and
+                   (pair? statement)
+                   (eq? 'block (car statement))
+                   (> (length statement) 1)) (cons 'block-exp (map (lambda (item) (parse item)) (cdr statement))))
+                  ;when exp
+                  ((and
+                    (pair? statement)
+                    (eq? 'when (car statement))
+                    (eq? (length statement) 3)) (cons 'when-exp (map (lambda (item) (parse item))) (cdr statement)))
+                ;output exp
+                  ((and
+                    (pair? statement)
+                    (eq? 'out (car statement))
+                    (eq? (length statement) 2)) (list 'output-exp (parse (cadr statement))))
+                ;list exp
                   ((list? statement)
                    (cons 'list-exp (map (lambda (item) (parse item)) statement)))
                   (else (print "Parse Fault: Invalid Statement"))
                   )
-                 
-                )
   )
+)
 
 
 
