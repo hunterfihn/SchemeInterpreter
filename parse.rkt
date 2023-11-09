@@ -49,13 +49,18 @@
                   ((and
                     (pair? statement)
                     (eq? 'when (car statement))
-                    (eq? (length statement) 3)) (cons 'when-exp (map (lambda (item) (parse item))) (cdr statement)))
-                ;output exp
+                    (eq? (length statement) 3)) (cons 'when-exp (map (lambda (item) (parse item)) (cdr statement))))
+                  ;assign exp
+                  ((and
+                    (pair? statement)
+                    (eq? 'assign (car statement))
+                    (eq? (length statement) 3)) (list 'assign-exp (list (parse (cadr statement)) (parse (caddr statement)))))
+                  ;output exp
                   ((and
                     (pair? statement)
                     (eq? 'out (car statement))
                     (eq? (length statement) 2)) (list 'output-exp (parse (cadr statement))))
-                ;list exp
+                  ;list exp
                   ((list? statement)
                    (cons 'list-exp (map (lambda (item) (parse item)) statement)))
                   (else (print "Parse Fault: Invalid Statement"))

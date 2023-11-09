@@ -66,10 +66,12 @@
                               (cond
                                 ((not (pair? lst)) (error-output "Received invalid parameter"))
                                 ((and (pair? lst) (eq? (length lst) 1) (void? (car lst))) (display "***End***"))
-                                ((void? (car lst)) (pick_first_non_void (cdr list)))
+                                ((void? (car lst)) (pick_first_non_void (cdr lst)))
                                 (else (car list))
                                 )
                               )
   )
+
+
 
 (provide (all-defined-out))
