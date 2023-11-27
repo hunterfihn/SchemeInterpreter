@@ -1,3 +1,12 @@
+
+
+
+
+
+
+
+
+
 #lang racket
 
 (require "utility.rkt")
@@ -14,7 +23,10 @@
                     ((eq? 'math-exp (car parse)) (process_math_exp parse env))
                     ((eq? 'let-exp (car parse)) (process_let_exp parse env))
                     ((eq? 'assign-exp (car parse))(process_assign_exp parse env))
-                    ((eq? 'when-exp (car parse)) ("test"))
+                    ((eq? 'when-exp (car parse)) (process_when_exp parse env))
+                    ((eq? 'each-exp (car parse)) (process_each_exp parse env))
+                    ((eq? 'each-body-exp (car parse)) (process_each_body_exp parse env))
+                    ((eq? 'each-list-exp (car parse)) (process_each_list_exp parse env))
                     ((eq? 'output-exp (car parse)) (displayln (string-append "***Output***: "(number->string (process (cadr parse) env)))))
                     ((eq? 'block-exp (car parse)) (pick_first_non_void (map (lambda (code) (process code env)) (cdr parse))))
                     (else (error-output "Processor failed to handle parsed input"))
@@ -63,17 +75,18 @@
 
 
 (define process_when_exp (lambda (parse env)
-                           (
                             (let
                                ((condition (process (cadr parse) env))
                                 (true_body_exp (append (cdr (caddr parse)) (list parse)))
                               )
-                            (process_when_exp_body true_body_exp)
-                                (println "End of while loop")
+                            (erase_void (if condition
+                                (process_when_exp_body true_body_exp env)
+                                (displayln "***End When Loop***")
                             )
                               )
                             )
-                      )
+  )
+ )
 
 
 (define process_when_exp_body (lambda (code env)
@@ -83,6 +96,53 @@
                                   (else (cons (process (car code) env) (process_when_exp_body (cdr code) env)))
                                  )
                                 )
+  )
+
+(define process_each_exp (lambda (body env)
+              (let*
+                  ((new_env (process_assign_exp (cadr body) env))
+                   (condition (process_bool_exp(cadr (caddr body)) new_env))
+                   (true_exp (append (cadddr (caddr body)) (list (caddr body)))))
+                (if condition
+                    (process true_exp new_env)
+                    (displayln "***End Each Loop***"))
+                   )
+  )
+ )
+
+(define process_each_list_exp (lambda (body env)
+                                (cond
+                                  ((eq? (length body) 1) (displayln "***End Each Loop***"))
+                                  ((eq? (car (cadr body)) 'assign-exp) (process (cons 'each-list-exp (cddr body)) (process (cadr body) env)))
+                                  ((void? (cadr body)) (list (cadr body)))
+                                  (else
+                                   (append (process (cadr body) env) (process (cons 'each-list-exp (cddr body)) env)))
+                                    )
+                                )
+  )
+
+(define process_each_body_exp (lambda (body env)
+                                (let*
+                                    ((new_env (process_assign_exp (caddr body) env))
+                                     (condition (process (cadr body) new_env))
+                                     (true_exp (append (cadddr body) (list body))))
+                                  (if condition
+                                      (process true_exp new_env)
+                                      (displayln "***End Each Loop***"))
+                                  
+                                )
+                                )
+  )
+
+
+(define erase_void (lambda (lst)
+                     (cond
+                       ((null? lst) '())
+                       ((void? lst) '())
+                       ((void? (car lst)) (erase_void (cdr lst)))
+                       (else (append (car lst) (erase_void (cdr lst))))
+                       )
+                     )
   )
 
 (define process_assign_exp (lambda (parse env)
@@ -110,7 +170,7 @@
 (define update_var_in_env (lambda (varname val env)
                             (cond
                               ((null? env) '())
-                              ((is_var_in_scope varname (car env)) (update_var_in_scope varname val (car env)))
+                              ((is_var_in_scope varname (car env)) (cons (update_var_in_scope varname val (car env)) (cdr env)))
                               (else (cons (car env) (update_var_in_env varname val (cdr env))))
                               )
                             )

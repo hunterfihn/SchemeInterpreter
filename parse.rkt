@@ -50,6 +50,14 @@
                     (pair? statement)
                     (eq? 'when (car statement))
                     (eq? (length statement) 3)) (cons 'when-exp (map (lambda (item) (parse item)) (cdr statement))))
+                  ;for exp
+                  ((and
+                    (pair? statement)
+                    (eq? 'each (car statement))
+                    (eq? (length statement) 5)) (list 'each-exp (list 'assign-exp (list (parse (car (cadr statement))) (parse (cadr (cadr statement)))))
+                                                      (list 'each-body-exp (parse (caddr statement))
+                                                            (list 'assign-exp (list (parse (car (cadddr statement))) (parse (cadr (cadddr statement)))))
+                                                            (cons 'each-list-exp (map (lambda (item) (parse item)) (cadr (cdddr statement)))))))                                   
                   ;assign exp
                   ((and
                     (pair? statement)

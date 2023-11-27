@@ -8,18 +8,12 @@
   )
 
  
-
-(define code '(assign x 10))
-
+(define code '(when (< a 5) ((assign a (+ a 1)) (out a))) )
 
 
-
-;(define code '(when (< a 5) (out a)); repeat print a 5 times
-;parse ->(when-exp (bool-exp < a 5) (block-exp (output-exp (var-exp a)) ...
 
 (define parsed (parse code))
 
-;parsed
-;(process parsed var_env)
+(process parsed var_env)
 
-(combine '((a b c) (x y z) (m o)))
+

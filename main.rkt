@@ -8,14 +8,11 @@
   )
 
  
-(define code '(when (< a 5) ((assign a (+ a 1)) (out a))) )
+(define code '(each (a 0) (< a 5) (a (+ a 1)) ((out a))))
 
 
 
 (define parsed (parse code))
 
-parsed
 
-;(process parsed var_env)
-
-
+(process parsed var_env)
